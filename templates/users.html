@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serving Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='users.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    
+    <div class="user_html">
+        <div class="home_container">
+            <h1>Crime   Precision</h1>
+            <p class="subtitle">A C S Fights Crime</p>
+        </div>
+        <div class="user_img_div">
+            <video autoplay loop muted class="video-element">
+                <source src="{{ url_for('static', filename='/user.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <button type="submit" id="backButton"><a href="/">Back</a></button>
+            <form action="/logout" method="GET">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+            <div class="genral_user_container">
+                <div class="user_container">
+                    <div class="genral_user">
+                       <img src="{{ url_for('static', filename='generalUsers.jpeg') }}">
+                        <div class="users_button">
+                            <button type="submit"><a href="/generalUser">General User</a></button>
+                        </div>
+                    </div>
+                    <div class="genral_user">
+                    <img src="{{ url_for('static', filename='BatchUsers.png') }}">
+                        <div class="users_button">
+                            <button type="submit"><a href="/batch_data">Batch Prediction</a></button>
+                        </div>
+                    </div>
+                    <div class="genral_user">
+                    <img src="{{ url_for('static', filename='liverdetection.png') }}">
+                        <div class="users_button">
+                            <button type="submit" id="liveCamButton">Live Crime Cam</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="model_info">
+                    <button type="submit"><a href="/model_info">Model Info</a></button>
+            </div>
+            <div class="history">
+                    <button type="submit"><a href="/history">View History</a></button>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                // Handle the Back button click
+                $("#backButton").click(function () {
+                    // Stop the video stream
+                    $.ajax({
+                        type: 'GET',
+                        url: '/stop_web_cam',
+                        success: function () {
+                            console.log('Video stream stopped');
+                        }
+                    });
+                });
+
+                // Handle the Live Cam button click
+                $("#liveCamButton").click(function () {
+                    // Start the video stream
+                    $.ajax({
+                        type: 'GET',
+                        url: '/web_cam',
+                        success: function () {
+                            console.log('Video stream started');
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

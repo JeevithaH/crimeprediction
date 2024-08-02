@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <title>Login</title>
+</head>
+<body>
+    <div class="login_html">
+        <div class="home_container">
+            <h1>Crime Precision</h1>
+            <p class="subtitle">A C S Fights Crime</p>
+        </div>
+        <div class="login_img_div">
+            <div class="container">
+                <button type="submit"><a href="/">Back</a></button>
+                <div class="form-container">
+                    <form action="/login" method="POST" onsubmit="displayErrorMessage()">
+                        <h2>Login</h2>
+                        <label for="email">Email:</label>
+                        <input type="email" name="email" autocomplete="off" required>
+                        <label for="password">Password:</label>
+                        <input type="password" name="password" autocomplete="off" required>
+                        <button type="submit">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            const message = params.get("message");
+            if(message){
+                alert(message);
+            }
+            </script>
+    </div>
+</body>
+</html>

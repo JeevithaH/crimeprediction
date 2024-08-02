@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='gen_user.css') }}">
+    <style>
+        /* CSS for the pop-up box */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Initially hidden */
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none; /* Initially hidden */
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: #888;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #555;
+        }
+
+        #popupContent {
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* CSS for the dropdowns */
+        select {
+            padding: 8px 16px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <title>Crime Precision</title>
+</head>
+<body>
+    <div class="home_container">
+        <h1>Crime Precision</h1>
+        <p class="subtitle">A C S Fights Crime</p>
+    </div>
+    <div class="gu_html">
+        <div class="gn_img_div">
+            <div class="container">
+                <button type="button"><a href="/users">Back</a></button>
+                <div class="form-container">
+                    <form id="predictionForm">
+                        <label for="State">State:</label>
+                        <select id="State" name="State" required>
+                            <option value="">Select State</option>
+                            <!-- Add options dynamically using JavaScript -->
+                        </select><br>
+
+                        <label for="District">District:</label>
+                        <select id="District" name="District" required>
+                            <option value="">Select District</option>
+                            <!-- Add options dynamically using JavaScript -->
+                        </select><br>
+
+                        <label for="Year">Year:</label>
+                        <input type="number" id="Year" name="Year" value="2024" required min="2024" max="2026" step="1"><br>
+
+                        <button type="submit">Predict</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HTML for the pop-up box -->
+    <div class="overlay" id="overlay"></div>
+
+    <div class="popup" id="popup">
+        <span class="close" onclick="closePopup()">&times;</span>
+        <div id="popupContent"></div>
+    </div>
+
+    <script>
+        // Replace this with your dictionary
+        var stateDistricts = {
+    'Andhra Pradesh': ['ADILABAD', 'ANANTAPUR', 'CHITTOOR', 'CUDDAPAH', 'CYBERABAD', 'EAST GODAVARI', 'GUNTAKAL RLY.', 'GUNTUR', 'GUNTUR URBAN', 'HYDERABAD CITY', 'KARIMNAGAR', 'KHAMMAM', 'KRISHNA', 'KURNOOL', 'MAHABOOBNAGAR', 'MEDAK', 'NALGONDA', 'NELLORE', 'NIZAMABAD', 'PRAKASHAM', 'RAJAHMUNDRY', 'RANGA REDDY', 'SECUNDERABAD RLY.', 'SRIKAKULAM', 'TIRUPATHI URBAN', 'VIJAYAWADA CITY', 'VIJAYAWADA RLY.', 'VISAKHA RURAL', 'VISAKHAPATNAM', 'VIZIANAGARAM', 'WARANGAL', 'WARANGAL URBAN', 'WEST GODAVARI'],
+    'Arunachal Pradesh': ['ANJAW', 'CHANGLANG', 'DIBANG VALLEY', 'K/KUMEY', 'KAMENG EAST', 'KAMENG WEST', 'LOHIT', 'PAPUM PARE', 'RURAL', 'SIANG EAST', 'SIANG UPPER', 'SIANG WEST', 'SUBANSIRI LOWER', 'SUBANSIRI UPPER', 'TAWANG', 'TIRAP', 'UPPER DIBANG VALLEY'],
+    'Assam': ['BAKSA', 'BARPETA', 'BIEO', 'BONGAIGAON', 'C.I.D.', 'CACHAR', 'CHIRANG', 'DARRANG', 'DHEMAJI', 'DHUBRI', 'DIBRUGARH', 'G.R.P.', 'GOALPARA', 'GOLAGHAT', 'GUWAHATI CITY', 'HAILAKANDI', 'HAMREN', 'JORHAT', 'KAMRUP', 'KARBI ANGLONG', 'KARIMGANJ', 'KOKRAJHAR', 'LAKHIMPUR', 'MORIGAON', 'N.C.HILLS', 'NAGAON', 'NALBARI', 'R.P.O.', 'SIBSAGAR', 'SONITPUR', 'TINSUKIA', 'UDALGURI'],
+    'Bihar': ['ARARIA', 'ARWAL', 'AURANGABAD', 'BAGAHA', 'BANKA', 'BEGUSARAI', 'BETTIAH', 'BHABHUA', 'BHAGALPUR', 'BHOJPUR', 'BUXAR', 'DARBHANGA', 'GAYA', 'GOPALGANJ', 'JAMALPUR RLY.', 'JAMUI', 'JEHANABAD', 'KATIHAR', 'KATIHAR RLY.', 'KHAGARIA', 'KISHANGANJ', 'LAKHISARAI', 'MADHEPURA', 'MADHUBANI', 'MOTIHARI', 'MUNGER', 'MUZAFFARPUR', 'MUZAFFARPUR RLY.', 'NALANDA', 'NAUGACHIA', 'NAWADAH', 'PATNA', 'PATNA RLY.', 'PURNEA', 'ROHTAS', 'SAHARSA', 'SAMASTIPUR', 'SARAN', 'SHEIKHPURA', 'SHEOHAR', 'SITAMARHI', 'SIWAN', 'SUPAUL', 'VAISHALI'],
+    'Chhattisgarh': ['BALOD', 'BALODA BAZAR', 'BALRAMPUR', 'BEMETARA', 'BILASPUR', 'BIZAPUR', 'DANTEWARA', 'DHAMTARI', 'DURG', 'GARIYABAND', 'GRP RAIPUR', 'JAGDALPUR', 'JANJGIR', 'JASHPUR', 'KABIRDHAM', 'KANKER', 'KONDAGAON', 'KORBA', 'KORIYA', 'MAHASAMUND', 'MUNGELI', 'NARAYANPUR', 'RAIGARH', 'RAIPUR', 'RAJNANDGAON', 'SARGUJA', 'SUKMA', 'SURAJPUR'],
+    'Goa': ['NORTH GOA', 'SOUTH GOA'],
+    'Gujarat': ['AMRELI', 'ANAND','BHARUCH', 'BHAVNAGAR', 'DANG', 'GANDHINAGAR', 'HIMATNAGAR', 'JAMNAGAR', 'NARMADA', 'NAVSARI','PATAN', 'PORBANDAR', 'SURENDRANAGAR', 'TAPI',  'VALSAD'],
+    'Haryana': ['BHIWANI', 'FARIDABAD', 'FATEHABAD', 'GURGAON', 'JHAJJAR', 'JIND', 'KAITHAL', 'KARNAL', 'KURUKSHETRA', 'MAHENDRAGARH', 'PANCHKULA', 'REWARI', 'ROHTAK', 'SIRSA', 'SONIPAT', 'YAMUNANAGAR'],
+    'Himachal Pradesh': ['BILASPUR', 'CHAMBA', 'HAMIRPUR', 'KANGRA', 'KINNAUR', 'KULLU','MANDI', 'SHIMLA', 'SIRMAUR', 'SOLAN', 'UNA'],
+    'Jammu & Kashmir': ['ANANTNAG', 'BANDIPORA',  'DODA', 'GANDERBAL', 'JAMMU', 'KARGIL', 'KATHUA', 'KISHTWAR', 'KULGAM', 'KUPWARA', 'POONCH', 'PULWAMA', 'RAMBAN', 'REASI', 'SAMBA', 'SHOPIAN', 'SRINAGAR', 'UDHAMPUR'],
+    'Jharkhand': ['BOKARO', 'CHATRA', 'DEOGHAR', 'DHANBAD', 'DUMKA', 'GARHWA', 'GIRIDIH', 'GODDA', 'GUMLA', 'HAZARIBAGH', 'JAMTARA', 'KHUNTI', 'KODERMA', 'LATEHAR','PALAMU', 'PAKUR', 'RAMGARH', 'RANCHI', 'SAHEBGANJ', 'SARAIKELA', 'SIMDEGA'],
+    'Karnataka': ['BAGALKOT','BANGALORE RURAL', 'BELGAUM', 'BELLARY', 'BIDAR', 'BIJAPUR', 'CHITRADURGA', 'DAKSHIN KANNADA', 'DAVANAGERE',  'GADAG', 'GULBARGA', 'HASSAN', 'HAVERI', 'KODAGU', 'KOLAR', 'KOPPAL', 'MANDYA', 'RAICHUR',  'SHIMOGA', 'TUMKUR', 'UDUPI', 'UTTAR KANNADA'],
+    'Kerala': [ 'IDUKKI', 'KANNUR', 'KOTTAYAM', 'MALAPPURAM', 'PALAKKAD', 'PATHANAMTHITTA'],
+    'Madhya Pradesh': ['AGAR', 'ALIRAJPUR', 'ANUPPUR', 'BALAGHAT', 'BARWANI', 'BETUL', 'BHIND', 'BHOPAL', 'BURHANPUR', 'CHHATARPUR', 'CHHINDWARA', 'DAMOH', 'DEWAS', 'DHAR', 'DINDORI', 'GUNA', 'GWALIOR', 'HARDA', 'HOSHANGABAD', 'INDORE', 'JABALPUR', 'JHABUA', 'KATNI', 'KHANDWA','MANDLA', 'MANDSAUR', 'MORENA', 'NARSINGHPUR', 'NEEMUCH', 'PANNA', 'RAISEN', 'RAJGARH', 'RATLAM', 'REWA', 'SAGAR', 'SATNA', 'SEONI', 'SHAHDOL', 'SHAJAPUR', 'SHEOPUR', 'SHIVPURI', 'SIDHI', 'SINGRAULI', 'TIKAMGARH', 'UJJAIN','VIDISHA'],
+    'Maharashtra': ['AHMEDNAGAR', 'AKOLA', 'BEED', 'BULDHANA', 'CHANDRAPUR', 'DHULE', 'GADCHIROLI', 'GONDIA', 'HINGOLI', 'JALGAON', 'JALNA', 'KOLHAPUR', 'LATUR',  'NANDED', 'NANDURBAR', 'OSMANABAD','PARBHANI', 'PUNE', 'RAIGAD', 'RATNAGIRI', 'SANGLI', 'SATARA', 'SINDHUDURG', 'WARDHA', 'WASHIM', 'YAVATMAL'],
+    'Manipur': ['BISHNUPUR', 'CHANDEL', 'CHURACHANDPUR', 'IMPHAL EAST', 'IMPHAL WEST', 'SENAPATI', 'TAMENGLONG', 'THOUBAL', 'UKHRUL'],
+    'Meghalaya': [  'RI-BHOI',],
+    'Mizoram': ['AIZAWL', 'CHAMPHAI', 'KOLASIB', 'LAWNGTLAI', 'LUNGLEI', 'MAMIT', 'SAIHA', 'SERCHHIP'],
+    'Nagaland': ['DIMAPUR', 'KIPHIRE', 'KOHIMA', 'LONGLENG', 'MOKOKCHUNG', 'MON', 'PEREN', 'PHEK', 'TUENSANG', 'WOKHA', 'ZUNHEBOTO'],
+    'Odisha': ['ANGUL','BARAGARH', 'BHADRAK', 'BOLANGIR', 'CUTTACK', 'DEOGARH', 'DHENKANAL', 'GAJAPATI', 'GANJAM','JHARSUGUDA', 'KALAHANDI', 'KANDHAMAL', 'KENDRAPARA', 'KORAPUT',  'MAYURBHANJ', 'NAYAGARH', 'NUAPADA', 'PURI', 'RAYAGADA', 'SAMBALPUR', 'SONEPUR', 'SUNDARGARH'],
+    'Puducherry': ['KARAIKAL'],
+    'Punjab': [ 'BARNALA', 'FARIDKOT', 'FATEHGARH SAHIB', 'GURDASPUR', 'HOSHIARPUR', 'KAPURTHALA', 'MANSA', 'MOGA', 'MUKTSAR', 'PATHANKOT', 'PATIALA',  'SANGRUR', 'TARN TARAN'],
+    'Rajasthan': ['AJMER', 'ALWAR', 'BANSWARA', 'BARMER', 'BHARATPUR', 'BHILWARA', 'BIKANER', 'BUNDI', 'CHITTORGARH', 'CHURU', 'DAUSA',  'DUNGARPUR', 'GANGANAGAR', 'HANUMANGARH',  'JAISALMER',  'JHALAWAR', 'JHUNJHUNU', 'KARAULI', 'NAGAUR', 'PALI', 'RAJSAMAND', 'SAWAI MADHOPUR', 'SIKAR', 'SIROHI', 'TONK', 'UDAIPUR'],
+    'Sikkim': ['EAST', 'NORTH', 'SOUTH', 'WEST'],
+    'Tamil Nadu': ['ARIYALUR', 'CHENNAI',  'CUDDALORE', 'DHARMAPURI', 'DINDIGUL', 'ERODE', 'KANCHIPURAM', 'KARUR', 'KRISHNAGIRI', 'NAGAPATTINAM', 'NAMAKKAL', 'PERAMBALUR',  'THANJAVUR', 'THENI', 'THIRUVALLUR', 'THIRUVARUR','TIRUPPUR','VELLORE', 'VILLUPURAM', 'VIRUDHUNAGAR'],
+    'Tripura': ['DHALAI', 'GOMATI', 'KHOWAI',  'UNAKOTI'],
+    'Uttar Pradesh': ['AGRA', 'ALIGARH', 'ALLAHABAD', 'AMBEDKAR NAGAR', 'AMETHI', 'AMROHA', 'AURAIYA', 'AZAMGARH', 'BAGHPAT', 'BAHRAICH', 'BALLIA', 'BANDA', 'BARABANKI', 'BAREILLY', 'BASTI',  'BIJNOR', 'DEORIA', 'ETAH', 'ETAWAH', 'FAIZABAD',  'FATEHPUR', 'FIROZABAD',  'GHAZIABAD', 'GHAZIPUR', 'GONDA', 'GORAKHPUR', 'HAMIRPUR', 'HAPUR', 'HARDOI', 'HATHRAS', 'JALAUN', 'JAUNPUR', 'JHANSI', 'KANNAUJ', 'KANPUR DEHAT', 'KANPUR NAGAR', 'KASGANJ', 'KAUSHAMBI',  'LALITPUR', 'LUCKNOW', 'MAHARAJGANJ', 'MAHOBA', 'MAINPURI', 'MATHURA', 'MAU', 'MEERUT', 'MIRZAPUR', 'MORADABAD', 'MUZAFFARNAGAR', 'PILIBHIT',  'RAMPUR', 'SAHARANPUR', 'SAMBHAL', 'SHAHJAHANPUR', 'SHAMLI', 'SITAPUR', 'SONBHADRA', 'SULTANPUR', 'UNNAO', 'VARANASI'],
+    'Uttarakhand': ['ALMORA', 'BAGESHWAR', 'CHAMOLI', 'CHAMPAWAT', 'DEHRADUN', 'HARIDWAR', 'NAINITAL', 'PAURI GARHWAL', 'PITHORAGARH', 'RUDRA PRAYAG', 'TEHRI GARHWAL'],
+    'West Bengal': [ 'BANKURA', 'BIRBHUM', 'DARJEELING', 'HOOGHLY', 'HOWRAH', 'JALPAIGURI', 'MALDA',   'MURSHIDABAD', 'NADIA', 'PURULIA',  'UTTAR DINAJPUR'],
+    'Chandigarh': ['CHANDIGARH'],
+    'Daman & Diu': ['DAMAN', 'DIU'],
+    'Lakshadweep': ['LAKSHADWEEP'],
+    'Puducherry': ['KARAIKAL']
+};
+
+        // Function to populate dropdown options
+        function populateDropdown(selectElement, options) {
+            selectElement.innerHTML = ''; // Clear existing options
+            options.forEach(function(option) {
+                var optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                selectElement.appendChild(optionElement);
+            });
+        }
+
+        // Populate state dropdown
+        var stateDropdown = document.getElementById('State');
+        populateDropdown(stateDropdown, Object.keys(stateDistricts));
+
+        // Populate district dropdown based on selected state
+        document.getElementById('State').addEventListener('change', function() {
+            var selectedState = this.value;
+            var districtDropdown = document.getElementById('District');
+            populateDropdown(districtDropdown, stateDistricts[selectedState]);
+        });
+
+        document.getElementById("predictionForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            fetch('/generalUser', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayPopup(data.message);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+
+        function displayPopup(content) {
+    // Split the content into lines using the comma as a delimiter
+    var lines = content.split(', ');
+
+    // Create separate div elements for each line
+    var contentHTML = '';
+    lines.forEach(function(line) {
+        contentHTML += '<div>' + line + '</div>';
+    });
+
+    // Set the HTML content of the popup
+    document.getElementById("popupContent").innerHTML = contentHTML;
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("popup").style.display = "block";
+}
+
+        function closePopup() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("popup").style.display = "none";
+        }
+    </script>
+</body>
+</html>

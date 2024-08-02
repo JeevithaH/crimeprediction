@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename='signup.css') }}">
+    <title>Document</title>
+</head>
+<body>
+    <div class="signup_html">
+        <div class="home_container">
+            <h1>Crime   Precision</h1>
+            <p class="subtitle">A C S Fights Crime</p>
+        </div>
+        <div class="signup_img_div">
+            <div class="container">
+                <button type="submit"><a href="/">Back</a></button>
+                    <div class="form-container">
+                        <form action="/signup" method="POST">
+                            <h2>Sign Up</h2>
+                            <!-- Hidden input for success message -->
+                            <input type="hidden" id="successMessage" name="successMessage">
+                            <label for="name">Name:</label>
+                            <input type="text" name="name" required>
+                            <label for="email">Email:</label>
+                            <input type="email" name="email" required>
+                            <label for="phone_number">Phone Number:</label>
+                            <input type="tel" name="phone_number" id="phone_number" required pattern="^\+91[0-9]{10}$">
+                            <label for="college_name">College Name:</label>
+                            <input type="text" name="college_name" required>
+                            <label for="password">Password:</label>
+                            <input type="password" name="password" required>
+                            <button type="submit">Sign Up</button>
+                            <!-- Display the success message if it exists -->
+                        {% if message %}
+                        <div class="success-message">{{ message }}</div>
+                    {% endif %}
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+ 
+</body>
+</html>

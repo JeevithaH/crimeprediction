@@ -1,0 +1,64 @@
+/* Reset default margin and padding */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Header styling */
+.home_container {
+    background-color: transparent; /* Set the background color to transparent */
+    padding: 10px 20px; /* Adjust padding as needed */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #fff;
+    margin-top: 20px; /* Add margin to push content down */
+}
+
+
+/* Video container styling */
+.welcome_video {
+    position: relative;
+    height: 100vh;
+    overflow: hidden; /* Hide overflow content */
+}
+
+/* Background video styling */
+.background-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+/* Button container styling */
+.button_container {
+    text-align: center;
+    position: absolute;
+    top:40%;
+    bottom: 20%; /* Adjust distance from bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+/* Button styling */
+.button_container .button {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    background-color: #1f3a6f;
+    color: #fff;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    margin: 0 10px; /* Add margin between buttons */
+}
+
+.button_container .button:hover {
+    background-color: #5eb1c1;
+}
+
+

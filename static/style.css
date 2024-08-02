@@ -1,0 +1,131 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    background: url("poli_car.jpg") center/cover no-repeat;
+}
+
+.login_html {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.login_img_div {
+    background: url("login_img.jpg") center/cover no-repeat;
+    height: 100vh; /* Set the height to cover the full viewport height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+.home_container {
+
+    background-color: #120e0e;
+    padding: 2px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    width:90%;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #666;
+    margin: 0;
+}
+
+.subtitle {
+    color: #666; /* Set a color for the subtitle */
+    margin-top: 10px; /* Add some space between the title and subtitle */
+}
+
+label {
+    margin-bottom: 5px;
+    color: #555;
+}
+
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.logo {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.users_button{
+    width: 200px;
+    margin-top: 20px;
+    align-items: center;
+    margin-left: 30%;
+}
+
+/*div img{
+height:475px;
+width: 1260px;
+}*/
+
+img {
+height:200px;
+width:300px;
+}
+
+.genral_user_container{
+    align-items: center;
+    padding: 20px;
+}
+
+.user_container{
+display: flex;
+    justify-content: space-around;
+padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.genral_user{
+background:#fff;
+padding:20px;
+}
